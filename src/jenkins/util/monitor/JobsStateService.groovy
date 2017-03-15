@@ -4,24 +4,26 @@ now=Calendar.instance;
 
 
 println("The build run at ${now.time}");
-println("Job's name;Disabled;Last execution date;Last build status;Evolution")
+println("Job's name;Job's Status;Last build result;Last execution date;Evolution")
 
 List<List<String>> jobsStatuses = new ArrayList<List<String>>();
 
-for (job in jenkins.items){
-	List<String> jobStatuts = new ArrayList<String>();
-	jobStatuts.add(job.name);
-	jobStatuts.add(job.disabled);
+jenkins.items.each{ job -> 
+	List<String> jobStatus = new ArrayList<String>();
+	jobStatus.add(job.name);
+	jobStatus.add(job.disabled?"DISABLED":"ENABLED");
 	lastBuild = job.getLastBuild();
    if (lastBuild!=null){
-	  // lastExecution #
-	  jobStatuts.add(lastBuild.getTimestamp().getTime().format("yyyy-MM-dd"));
-	  // result 
-	  jobStatuts.add(lastBuild.getResult().toString());
+	   // result 
+	   jobStatus.add(lastBuild.getResult().toString());
+	  // lastExecution 
+	  jobStatus.add(lastBuild.getTimestamp().getTime().format("yyyy-MM-dd"));
 	  // evolution 
-	  jobStatuts.add(lastBuild.getBuildStatusSummary().message);
+	  jobStatus.add(lastBuild.getBuildStatusSummary().message);
+	} else {
+		jobStatus.add("NEVER_RUN");
 	}
-	jobsStatuses.add(jobStatuts);
+	jobsStatuses.add(jobStatus);
 }
 jobsStatuses.each {
 	it.each {
