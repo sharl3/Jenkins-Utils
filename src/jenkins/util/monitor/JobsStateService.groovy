@@ -1,14 +1,7 @@
  
-jenkins = Hudson.instance
-now=Calendar.instance;
-
-
-println("The build run at ${now.time}");
-println("Job's name;Job's Status;Last build result;Last execution date;Evolution")
-
 List<List<String>> jobsStatuses = new ArrayList<List<String>>();
 
-jenkins.items.each{ job -> 
+Hudson.instance.items.each{ job -> 
 	List<String> jobStatus = new ArrayList<String>();
 	jobStatus.add(job.name);
 	jobStatus.add(job.disabled?"DISABLED":"ENABLED");
