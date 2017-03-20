@@ -1,16 +1,14 @@
 import hudson.model.*
 
 def blacklist = ["PrimaRE-"] as ArrayList;
-def BigDecimal JOB_OBSOLESENCE = 6;
-def BigDecimal SECONDS_PER_MONTH = 30 * 24 * 60 * 60;
-def BigDecimal now_in_seconds = Calendar.instance.time.time/1000;
-def BigDecimal OBSOLESENCE_IN_SECONDS = SECONDS_PER_MONTH.multiply(JOB_OBSOLESENCE);
-
-println "Obsolesence in seconds : ${OBSOLESENCE_IN_SECONDS}"
-println "Now in seconds : ${now_in_seconds}" 
-
-
+def JOB_OBSOLESENCE = 6;
+def Calendar milestone = Calendar.instance;
+milestone.add(Calendar.MONTH, -JOB_OBSOLESENCE);
 def TO_DELETE_VIEW =Hudson.instance.getView("TO_DELETE");
+
+
+println ("Milestone : " + (milestone.get(Calendar.MONTH) + 1) + "-" + milestone.get(Calendar.DATE) + "-" + milestone.get(Calendar.YEAR));
+
 
 // Delete all the jobs in the TO_DELETE view
 TO_DELETE_VIEW.items.each() {
@@ -29,9 +27,8 @@ Hudson.instance.items.each{ job ->
 		// if the job is older than "jobObsolesence" months
 		// then we prefix it with "TO_DELETE" so next time this algorithm is executed it is actually deleted
 		else if(job.getLastBuild() != null){
-			def BigDecimal lastBuildTimeStampInSeconds = job.getLastBuild().getTimestamp().time.time / 1000;
-			if (now_in_seconds.minus(lastBuildTimeStampInSeconds) > OBSOLESENCE_IN_SECONDS)
-				println "${jobName} was last build ${lastBuildTimeStampInSeconds.div(SECONDS_PER_MONTH)} month ago)"
+			if (job.getLastBuild().getTimestamp()?.before(milestone))
+				println "${jobName} was last built more than 6 months ago";
 		}
 	}
 }
