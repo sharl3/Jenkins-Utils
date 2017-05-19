@@ -13,11 +13,3 @@ Hudson.instance.items.each{ job ->
 	}
 	fp.write(job.getConfigFile().asString(), null);
 }
-
-
-// Customer Care
-// IBCS
-// Prima Repository
-// Prima-Commons
-// Prima-Integration
-// Prima-RE
